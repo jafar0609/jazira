@@ -21,13 +21,16 @@
 </head>
 <body class="text-slate-800">
 
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200 px-3 py-2">
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 px-3 py-2">
         <div class="max-w-xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-xs shadow">JC</div>
                 <div>
                     <h1 class="text-xs font-extrabold text-slate-900">Jazira & Chopachop</h1>
-                    <p id="header-date" class="text-[9px] text-slate-500"></p>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <span class="text-[9px] text-slate-500">Umumiy Sana:</span>
+                        <input type="date" id="global-date" onchange="onGlobalDateChange(this.value)" class="text-[10px] font-extrabold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200 focus:outline-none cursor-pointer">
+                    </div>
                 </div>
             </div>
             <div class="flex items-center gap-1">
@@ -246,7 +249,7 @@
 
     <script>
         const HOURLY_RATE = 2500000 / 360;
-        let staffList = JSON.parse(localStorage.getItem('jc_v22_staff')) || [
+        let staffList = JSON.parse(localStorage.getItem('jc_v23_staff')) || [
             { id: 1, name: "Oʻzim (Rahbar)", role: "rahbar", salary: 0 },
             { id: 2, name: "Xushnud", role: "razdacha", salary: 2500000 },
             { id: 3, name: "Murod", role: "razdacha", salary: 2500000 },
@@ -262,43 +265,59 @@
             { id: 13, name: "Abbos", role: "kuryer", salary: 700000 },
             { id: 14, name: "Umid", role: "kuryer", salary: 700000 }
         ];
-        let partners = JSON.parse(localStorage.getItem('jc_v22_partners')) || [{ id: 1, name: "Kafe 1", percent: 10 }];
-        let branchSales = JSON.parse(localStorage.getItem('jc_v22_sales')) || [];
-        let botCosts = JSON.parse(localStorage.getItem('jc_v22_botcosts')) || [];
-        let attendance = JSON.parse(localStorage.getItem('jc_v22_att')) || [];
-        let expenses = JSON.parse(localStorage.getItem('jc_v22_exp')) || [];
-        let atkazs = JSON.parse(localStorage.getItem('jc_v22_atkazs')) || [];
-        let tasks = JSON.parse(localStorage.getItem('jc_v22_tasks')) || [];
-        let financeItems = JSON.parse(localStorage.getItem('jc_v22_fin')) || [];
-        let calcMode = localStorage.getItem('jc_v22_calcmode') || 'dastavka';
+        let partners = JSON.parse(localStorage.getItem('jc_v23_partners')) || [{ id: 1, name: "Kafe 1", percent: 10 }];
+        let branchSales = JSON.parse(localStorage.getItem('jc_v23_sales')) || [];
+        let botCosts = JSON.parse(localStorage.getItem('jc_v23_botcosts')) || [];
+        let attendance = JSON.parse(localStorage.getItem('jc_v23_att')) || [];
+        let expenses = JSON.parse(localStorage.getItem('jc_v23_exp')) || [];
+        let atkazs = JSON.parse(localStorage.getItem('jc_v23_atkazs')) || [];
+        let tasks = JSON.parse(localStorage.getItem('jc_v23_tasks')) || [];
+        let financeItems = JSON.parse(localStorage.getItem('jc_v23_fin')) || [];
+        let calcMode = localStorage.getItem('jc_v23_calcmode') || 'dastavka';
 
-        const todayStr = new Date().toISOString().split('T')[0];
-        ['sale-date', 'att-date', 'fin-date', 'bc-date', 'exp-date', 'atkaz-date'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el && !el.value) el.value = todayStr;
-        });
+        let globalSelectedDate = localStorage.getItem('jc_v23_gdate') || new Date().toISOString().split('T')[0];
+
+        function initGlobalDate() {
+            const gEl = document.getElementById('global-date');
+            if (gEl) gEl.value = globalSelectedDate;
+            applyGlobalDateToForms();
+        }
+
+        function onGlobalDateChange(val) {
+            if (!val) return;
+            globalSelectedDate = val;
+            localStorage.setItem('jc_v23_gdate', globalSelectedDate);
+            applyGlobalDateToForms();
+        }
+
+        function applyGlobalDateToForms() {
+            ['sale-date', 'att-date', 'fin-date', 'bc-date', 'exp-date', 'atkaz-date'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = globalSelectedDate;
+            });
+        }
 
         document.getElementById('calc-mode').value = calcMode;
-        document.getElementById('header-date').innerText = new Date().toLocaleDateString('uz-UZ', { weekday: 'short', day: 'numeric', month: 'long' });
+        initGlobalDate();
 
         function saveAll() {
-            localStorage.setItem('jc_v22_staff', JSON.stringify(staffList));
-            localStorage.setItem('jc_v22_partners', JSON.stringify(partners));
-            localStorage.setItem('jc_v22_sales', JSON.stringify(branchSales));
-            localStorage.setItem('jc_v22_botcosts', JSON.stringify(botCosts));
-            localStorage.setItem('jc_v22_att', JSON.stringify(attendance));
-            localStorage.setItem('jc_v22_exp', JSON.stringify(expenses));
-            localStorage.setItem('jc_v22_atkazs', JSON.stringify(atkazs));
-            localStorage.setItem('jc_v22_tasks', JSON.stringify(tasks));
-            localStorage.setItem('jc_v22_fin', JSON.stringify(financeItems));
-            localStorage.setItem('jc_v22_calcmode', calcMode);
+            localStorage.setItem('jc_v23_staff', JSON.stringify(staffList));
+            localStorage.setItem('jc_v23_partners', JSON.stringify(partners));
+            localStorage.setItem('jc_v23_sales', JSON.stringify(branchSales));
+            localStorage.setItem('jc_v23_botcosts', JSON.stringify(botCosts));
+            localStorage.setItem('jc_v23_att', JSON.stringify(attendance));
+            localStorage.setItem('jc_v23_exp', JSON.stringify(expenses));
+            localStorage.setItem('jc_v23_atkazs', JSON.stringify(atkazs));
+            localStorage.setItem('jc_v23_tasks', JSON.stringify(tasks));
+            localStorage.setItem('jc_v23_fin', JSON.stringify(financeItems));
+            localStorage.setItem('jc_v23_calcmode', calcMode);
         }
 
         function exportData() {
             const data = { staffList, partners, branchSales, botCosts, attendance, expenses, atkazs, tasks, financeItems, calcMode };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `jazira_backup_${todayStr}.json`; a.click();
+            const a = document.createElement('a'); a.href = url; a.download = `jazira_backup_${globalSelectedDate}.json`; a.click();
             URL.revokeObjectURL(url);
         }
 
